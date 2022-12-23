@@ -2710,7 +2710,7 @@ prometheus:
     ## port to 2379 and allow etcd scraping provided it is running on all Kubernetes master nodes
     ##
     additionalScrapeConfigs[]:
-      - job_name: 'blackbox-external-targets'
+    - job_name: 'blackbox-external-targets'
     metrics_path: /probe
     params:
       module: [http_2xx]
