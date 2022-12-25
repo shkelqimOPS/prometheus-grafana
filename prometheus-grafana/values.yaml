@@ -2724,29 +2724,35 @@ prometheus:
           target_label: instance
         - target_label: __address__
           replacement: blackbox-exporter-prometheus-blackbox-exporter:9115
-    - job_name: "blackbox-kubernetes-services"
-      metrics_path: /probe
-      params:
-        module: [http_2xx]
+    - job_name: kubernetes-services
       kubernetes_sd_configs:
       - role: service
+      metrics_path: /probe
+      params:
+        module:
+        - http_2xx
       relabel_configs:
-      # Example relabel to probe only some services that have "example.io/should_be_probed = true" annotation
-      #  - source_labels: [__meta_kubernetes_service_annotation_example_io_should_be_probed]
-      #    action: keep
-      #    regex: true      
-        - source_labels: [__address__]
-          target_label: __param_target
-        - target_label: __address__
-          replacement:  blackbox-exporter-prometheus-blackbox-exporter:9115
-        - source_labels: [__param_target]
-          target_label: instance
-        - action: labelmap
-          regex: __meta_kubernetes_service_label_(.+)
-        - source_labels: [__meta_kubernetes_namespace]
-          target_label: default
-        - source_labels: [__meta_kubernetes_service_name]
-          target_label: kubernetes
+      - action: keep
+        regex: true
+        source_labels:
+        - __meta_kubernetes_service_annotation_prometheus_io_probe
+      - source_labels:
+        - __address__
+        target_label: __param_target
+      - replacement: blackbox-service:9115	# Blackbox hostname:port
+        target_label: __address__
+      - source_labels:
+        - __param_target
+        target_label: instance
+      - action: labelmap
+        regex: __meta_kubernetes_service_label_(.+)
+      - source_labels:
+        - __meta_kubernetes_namespace
+        target_label: kubernetes_namespace
+      - source_labels:
+        - __meta_kubernetes_service_name
+        target_label: kubernetes_name
+
 
 
     # - job_name: kube-etcd
