@@ -2717,6 +2717,7 @@ prometheus:
       static_configs:
         - targets:
           - https://www.google.com
+          - https://api.dev.healios.care/
       relabel_configs:
         - source_labels: [__address__]
           target_label: __param_target
