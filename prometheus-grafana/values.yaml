@@ -85,7 +85,17 @@ defaultRules:
 
 ## Deprecated way to provide custom recording or alerting rules to be deployed into the cluster.
 ##
-# additionalPrometheusRules: []
+  additionalPrometheusRules:
+    groups:
+    - name: alert.rules
+      rules:
+      - alert: EndpointDown
+        expr: probe_success == 0
+        for: 10s
+        labels:
+          severity: "critical"
+        annotations:
+          summary: "Endpoint {{ $labels.instance }} down"
 #  - name: my-rule-file
 #    groups:
 #      - name: my_group
